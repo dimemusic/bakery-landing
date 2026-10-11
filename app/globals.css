@@ -9,8 +9,30 @@
   --teal: #00afb9;
   --cream: #fff8f2;
 
+  /* AA-safe text shades of the brand hues (the base tokens stay for fills/accents) */
+  --coral-deep: #b93a32; /* 5.4:1 on cream */
+  --brick-deep: #85403a; /* 7.2:1 on cream, 5.7:1 on peach */
+  --teal-deep: #006971; /* 6.1:1 on cream, 4.9:1 on peach */
+  --teal-ink: #00353a; /* text on --teal */
+  --ink: #43241f; /* icons/text on --coral */
+  --ice: #e4f6f7; /* box interior */
+
+  --header-h: 4.5rem; /* 72px at the 16px root; shrinks at big sizes so the bar stays ~80px */
+  --peek: 2.5rem; /* how much of the next section (marquee) peeks under the hero */
+
+  /* Section rhythm (shared by every landing section except Hero and Header).
+     --section-y: vertical padding of a section. --section-head-gap: section title block -> content.
+     Multiples of 8px at the 16px root; rem, so they scale with the root size. */
+  --section-y: 3.5rem; /* 56px */
+  --section-head-gap: 2rem; /* 32px */
+
   --background: var(--cream);
   --foreground: var(--brown);
+}
+
+/* extra-wide step (>= 2400px) for tuning the hero on 2560px screens */
+@theme {
+  --breakpoint-3xl: 150rem; /* 2400px at the browser default size (rem, like the built-in breakpoints, so variant order is correct) */
 }
 
 @theme inline {
@@ -21,18 +43,352 @@
   --color-brown: var(--brown);
   --color-teal: var(--teal);
   --color-cream: var(--cream);
+  --color-coral-deep: var(--coral-deep);
+  --color-brick-deep: var(--brick-deep);
+  --color-teal-deep: var(--teal-deep);
+  --color-teal-ink: var(--teal-ink);
+  --color-ink: var(--ink);
+  --color-ice: var(--ice);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-heading: var(--font-unbounded);
+  --font-heading: var(--font-marmelad);
   --font-body: var(--font-nunito);
+  --shadow-sticker: 0.25rem 0.25rem 0 0 rgb(183 107 101 / 0.35);
+  --shadow-sticker-lg: 0.5rem 0.5rem 0 0 rgb(183 107 101 / 0.35);
+}
+
+/* Root size steps: every rem-based value (type, spacing, container) scales together, like browser zoom.
+   Deliberately gentler than proportional: 2560px lands at ~119% zoom (19px), not 150%; the hero adds its own 3xl step. */
+html {
+  font-size: 16px;
+}
+
+@media (min-width: 1600px) {
+  html {
+    font-size: 17px;
+  }
+}
+
+@media (min-width: 1920px) {
+  :root {
+    font-size: 19px;
+    --header-h: 4rem;
+  }
+}
+
+@media (min-width: 2400px) {
+  :root {
+    font-size: 19px;
+    --header-h: 3.5rem;
+  }
 }
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-h) + 1rem);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.55;
+}
+
+/* Marmelad ships a single weight: never let the browser fake a bold. */
+.font-heading {
+  font-weight: 400;
+  font-synthesis: none;
+  /* a hair of stroke makes the single weight friendlier and sturdier at display sizes */
+  -webkit-text-stroke: 0.028em currentColor;
+}
+
+/* Hero backdrop: soft peach-to-cream wash + a barely-there pattern of tiny outline pastries. */
+.hero-bg {
+  background-color: var(--cream);
+  background-image:
+    url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22240%22%20height%3D%22240%22%20viewBox%3D%220%200%20240%20240%22%3E%3Cg%20opacity%3D%220.035%22%20fill%3D%22none%22%20stroke%3D%22%2385403a%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cg%20transform%3D%22translate(18%2014)%20rotate(-12%2020%2020)%20scale(.62)%22%3E%3Cpath%20d%3D%22M12%2050C0%2030%2010%208%2032%208s32%2022%2020%2042M14%2028C24%2038%2038%2044%2050%2050M50%2028C40%2038%2026%2044%2014%2050%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate(142%2010)%20rotate(10%2022%2028)%22%3E%3Cpath%20d%3D%22M6%2030l6%2026h28l6-26zM3%2030Q0%2016%2014%2014Q16%202%2028%206Q40%204%2040%2016Q50%2020%2044%2030z%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate(28%20128)%20rotate(8%2018%2018)%22%3E%3Ccircle%20cx%3D%2218%22%20cy%3D%2218%22%20r%3D%2217%22%2F%3E%3Cpath%20d%3D%22M10%2012l3%202M24%209l2%203M26%2024l3%201M11%2025l2-2M18%2018l1%201%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate(150%20118)%20rotate(-8%2024%2014)%22%3E%3Cpath%20d%3D%22M2%2026Q6%204%2024%204Q42%204%2046%2026Q38%2018%2032%2020Q28%2010%2024%2010Q20%2010%2016%2020Q10%2018%202%2026z%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate(92%20176)%20rotate(14%2017%2017)%22%3E%3Ccircle%20cx%3D%2217%22%20cy%3D%2217%22%20r%3D%2216%22%2F%3E%3Ccircle%20cx%3D%2217%22%20cy%3D%2217%22%20r%3D%225.5%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate(196%20190)%20rotate(-6%2014%2014)%20scale(.8)%22%3E%3Cpath%20d%3D%22M2%2030V14Q2%204%2014%204t12%2010v16z%22%2F%3E%3Cpath%20d%3D%22M2%2020h24%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E"),
+    linear-gradient(180deg, var(--peach) 0%, #ffe8d3 42%, var(--cream) 100%);
+  background-size:
+    15rem 15rem,
+    100% 100%;
+}
+
+@media (max-width: 640px) {
+  .hero-bg {
+    background-size:
+      10rem 10rem,
+      100% 100%;
+  }
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --section-y: 5rem; /* 80px (was 112px) */
+    --section-head-gap: 2.5rem; /* 40px (was 48px) */
+  }
+}
+
+.section-y {
+  padding-block: var(--section-y);
+}
+
+.section-head-gap {
+  margin-top: var(--section-head-gap);
+}
+
+/* Fluid page container: 80rem (grows with the root size), side padding grows with the viewport. */
+.wrap {
+  width: 100%;
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 4vw, 3rem);
+}
+
+/* ---------- Keyframes (transform / opacity only) ---------- */
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.55);
+  }
+  65% {
+    transform: scale(0.88);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes steam {
+  0% {
+    opacity: 0;
+    transform: translateY(0.5rem) scaleX(0.9);
+  }
+  35% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-1.5rem) scaleX(1.1);
+  }
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.6) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1) rotate(25deg);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.5rem);
+  }
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes drop-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-1.75rem) scale(0.5);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(0.25rem) scale(1.08);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes rv-in {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- Helpers ---------- */
+
+/* Time-based entrance; stagger with style={{ "--delay": "120ms" }} */
+.reveal {
+  animation: fade-up 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+/* Scroll reveal: pure CSS. Where view timelines are unsupported the content simply shows. */
+@supports (animation-timeline: view()) {
+  .rv {
+    animation: rv-in linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 40%;
+  }
+}
+
+/* Hover feedback for cards and stickers: a small lift with a soft shadow. No rotation, no animation.
+   (.hover-wobble is the legacy class name still used in markup; both names do the same thing.)
+   Uses the individual `translate` property, so a card's resting `rotate` is never disturbed. */
+.hover-lift,
+.hover-wobble {
+  transition:
+    translate 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.hover-lift:hover,
+.hover-wobble:hover {
+  translate: 0 -0.25rem;
+  box-shadow:
+    0.25rem 0.25rem 0 0 rgb(183 107 101 / 0.35),
+    0 0.75rem 1.5rem -0.5rem rgb(133 64 58 / 0.28);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hover-lift:hover,
+  .hover-wobble:hover {
+    translate: none;
+  }
+}
+
+.animate-pop {
+  animation: pop 0.5s ease-out;
+}
+
+.animate-steam {
+  animation: steam 3s ease-in-out infinite;
+}
+
+.animate-twinkle {
+  animation: twinkle 3.2s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 5s ease-in-out infinite;
+}
+
+.animate-drop-in {
+  animation: drop-in 0.5s cubic-bezier(0.3, 1.4, 0.5, 1) both;
+}
+
+.marquee-track {
+  animation: marquee 38s linear infinite;
+}
+
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+/* ---------- Product pages ---------- */
+
+/* Page enter: soft fade + slide (time-based, runs on every client navigation too) */
+.page-enter {
+  animation: fade-up 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* Allergen badges and other stickers popping in with a small bounce; stagger with --delay */
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-pop-in {
+  animation: pop-in 0.45s cubic-bezier(0.3, 1.4, 0.5, 1) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+/* Price number re-entering when it changes (keyed in React) */
+@keyframes tick-up {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-tick {
+  display: inline-block;
+  animation: tick-up 0.3s ease-out both;
+}
+
+/* Product photo: gentle zoom on hover */
+.zoom-on-hover img {
+  transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.zoom-on-hover:hover img {
+  transform: scale(1.08);
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .marquee {
+    overflow-x: auto;
+  }
+
+  .marquee-dup {
+    display: none;
+  }
+
+  .zoom-on-hover:hover img {
+    transform: none;
+  }
 }
